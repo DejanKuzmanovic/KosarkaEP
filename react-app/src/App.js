@@ -1,25 +1,32 @@
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
 import './App.css';
+import CurrentUser from "./components/page/content/CurrentUser";
+import axios from "axios";
 
-function App() {
+export default () => {
+
+    axios.defaults.withCredentials = true;
+
+  const [text, setText] = React.useState('');
+  const [username, setUsername] = React.useState('');
+
+  useEffect(() => {
+    getCurrentUser().then(r => console.log('Retrieved username: ' + r));
+  }, []);
+
+  const getCurrentUser = async () => {
+    axios.get('http://localhost:8080/api/v1/user/current')
+        .then(function (response) {
+          setUsername(response.data.username);
+        })
+        .catch(function (error) {
+          console.log('Error: ' + error);
+        });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div>
+        <CurrentUser username={username}/>
+      </div>
   );
 }
-
-export default App;
